@@ -6,438 +6,381 @@
 <title>Bảng Giá Hàng Hóa</title>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --accent: #e63946;
-    --gold: #f4a261;
-    --bg: #0f0f13;
-    --bg2: #1a1a22;
-    --bg3: #252530;
-    --border: #2a2a36;
-    --text: #f0ece4;
-    --muted: #a09898;
-    --dim: #555;
-  }
-  body { font-family: 'Be Vietnam Pro', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: var(--bg2); }
-  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
-
-  /* HEADER */
-  #header {
-    background: linear-gradient(135deg, #1a0a0c 0%, #0f0f13 60%);
-    border-bottom: 1px solid #2a1518;
-    padding: 16px 20px;
-    position: sticky; top: 0; z-index: 30;
-  }
-  .header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-  .logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-  .logo-bar { width: 5px; height: 26px; background: var(--accent); border-radius: 3px; }
-  .logo h1 { font-size: 18px; font-weight: 800; color: #fff; }
-  .logo p { font-size: 11px; color: var(--dim); margin-top: 1px; }
-  #searchInput {
-    flex: 1; min-width: 180px;
-    background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
-    padding: 9px 14px 9px 36px; color: var(--text); font-size: 14px; font-family: inherit; outline: none;
-  }
-  #searchInput:focus { border-color: var(--accent); }
-  .search-wrap { position: relative; flex: 1; min-width: 180px; }
-  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 15px; color: var(--dim); pointer-events: none; }
-  #cartBtn {
-    position: relative; background: var(--accent); border: none; border-radius: 10px;
-    padding: 9px 16px; color: #fff; font-weight: 700; font-size: 14px; cursor: pointer;
-    font-family: inherit; display: flex; align-items: center; gap: 7px; flex-shrink: 0;
-    transition: filter .2s;
-  }
-  #cartBtn:hover { filter: brightness(1.1); }
-  #cartBadge {
-    position: absolute; top: -6px; right: -6px;
-    background: #fff; color: var(--accent); border-radius: 50%;
-    width: 20px; height: 20px; font-size: 11px; font-weight: 800;
-    display: none; align-items: center; justify-content: center;
-  }
-
-  /* CONTROLS */
-  #controls { max-width: 1100px; margin: 16px auto 0; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
-  .cats { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; flex: 1; }
-  .cats::-webkit-scrollbar { height: 3px; }
-  .cat-btn {
-    cursor: pointer; border: 1px solid var(--border); padding: 6px 14px; border-radius: 20px;
-    font-size: 12px; font-weight: 500; white-space: nowrap; background: var(--bg2); color: var(--muted);
-    font-family: inherit; transition: all .18s;
-  }
-  .cat-btn:hover { border-color: var(--accent); color: var(--text); }
-  .cat-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-  #sortSelect {
-    background: var(--bg2); border: 1px solid var(--border); color: var(--text);
-    border-radius: 8px; padding: 7px 12px; font-size: 13px; font-family: inherit;
-    cursor: pointer; outline: none;
-  }
-  #sortSelect:hover { border-color: var(--accent); }
-
-  /* GRID */
-  #main { max-width: 1100px; margin: 0 auto; padding: 16px 20px 40px; }
-  #resultCount { color: var(--dim); font-size: 13px; margin-bottom: 14px; }
-  #grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
-
-  .card {
-    background: var(--bg2); border: 1px solid var(--border); border-radius: 14px;
-    padding: 14px; transition: all .2s; display: flex; flex-direction: column;
-  }
-  .card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(230,57,70,.12); }
-  .card-cat { font-size: 9px; color: var(--dim); letter-spacing: .5px; text-transform: uppercase; margin-bottom: 4px; }
-  .card-name { font-weight: 600; font-size: 14px; line-height: 1.4; flex: 1; }
-  .card-note { display: inline-block; background: var(--bg3); border-radius: 6px; padding: 2px 8px; font-size: 11px; color: var(--muted); margin-top: 8px; }
-  .card-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
-  .card-price { font-size: 19px; font-weight: 800; color: var(--gold); }
-  .add-btn {
-    cursor: pointer; border: 1px solid rgba(230,57,70,.35); border-radius: 8px;
-    padding: 7px 13px; font-size: 13px; font-weight: 600; font-family: inherit;
-    background: rgba(230,57,70,.12); color: var(--accent); transition: all .18s;
-  }
-  .add-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
-  .card-updated { font-size: 10px; color: #3a3a48; margin-top: 8px; }
-  #emptyMsg { text-align: center; color: var(--dim); padding: 60px 0; font-size: 15px; }
-
-  /* CART OVERLAY */
-  #overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 40; backdrop-filter: blur(4px); }
-  #cartPanel {
-    display: none; position: fixed; right: 0; top: 0; bottom: 0;
-    width: min(400px, 100vw); background: #14141c; border-left: 1px solid var(--border);
-    z-index: 50; flex-direction: column;
-    animation: slideIn .25s ease;
-  }
-  @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
-  .cart-header { padding: 18px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-  .cart-header h2 { font-weight: 800; font-size: 17px; color: #fff; }
-  #closeCart { background: none; border: none; color: #888; font-size: 22px; cursor: pointer; }
-  #cartItems { flex: 1; overflow-y: auto; padding: 14px 20px; }
-  .cart-empty { text-align: center; color: var(--dim); margin-top: 60px; }
-  .cart-empty div { font-size: 44px; margin-bottom: 10px; }
-  .cart-item { background: var(--bg2); border-radius: 12px; padding: 12px; margin-bottom: 10px; border: 1px solid var(--border); }
-  .ci-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-  .ci-name { font-weight: 600; font-size: 14px; }
-  .ci-note { display: inline-block; background: var(--bg3); border-radius: 5px; padding: 1px 7px; font-size: 10px; color: var(--muted); margin-top: 3px; }
-  .ci-remove { background: none; border: none; color: var(--dim); cursor: pointer; font-size: 16px; }
-  .ci-bottom { display: flex; align-items: center; justify-content: space-between; }
-  .qty-wrap { display: flex; align-items: center; gap: 10px; }
-  .qty-btn {
-    border: none; border-radius: 6px; width: 28px; height: 28px; font-size: 18px; font-weight: 700;
-    cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; transition: filter .15s;
-  }
-  .qty-btn:hover { filter: brightness(1.2); }
-  .qty-num { font-weight: 700; font-size: 16px; min-width: 22px; text-align: center; }
-  .ci-price { font-weight: 700; color: var(--gold); }
-  .cart-footer { padding: 18px 20px; border-top: 1px solid var(--border); }
-  .cart-total { display: flex; justify-content: space-between; margin-bottom: 14px; }
-  .cart-total span:first-child { color: var(--muted); }
-  .cart-total span:last-child { font-size: 22px; font-weight: 800; color: var(--gold); }
-  #confirmBtn {
-    width: 100%; background: var(--accent); border: none; border-radius: 10px;
-    padding: 13px; color: #fff; font-weight: 700; font-size: 15px; cursor: pointer;
-    font-family: inherit; transition: filter .2s; margin-bottom: 8px;
-  }
-  #confirmBtn:hover { filter: brightness(1.1); }
-  #clearBtn {
-    width: 100%; background: none; border: 1px solid var(--border); border-radius: 10px;
-    padding: 10px; color: #888; font-weight: 500; font-size: 13px; cursor: pointer; font-family: inherit;
-  }
-
-  @media (max-width: 600px) {
-    .logo h1 { font-size: 15px; }
-    #grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
-    .card-price { font-size: 16px; }
-  }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root { --accent: #e63946; --price: #d9480f; --bg: #f5f5f0; --bg2: #ffffff; --bg3: #eeeee8; --border: #ddddd5; --text: #1a1a1a; --muted: #777770; --dim: #aaaaaa; }
+body { font-family: 'Be Vietnam Pro', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: var(--bg3); } ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+#header { background: #fff; border-bottom: 1px solid var(--border); box-shadow: 0 2px 12px rgba(0,0,0,.06); padding: 14px 20px; position: sticky; top: 0; z-index: 30; }
+.header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.logo-bar { width: 5px; height: 26px; background: var(--accent); border-radius: 3px; }
+.logo h1 { font-size: 18px; font-weight: 800; color: #1a1a1a; }
+.logo p { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.search-wrap { position: relative; flex: 1; min-width: 180px; }
+.search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--dim); pointer-events: none; }
+#searchInput { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 9px 14px 9px 34px; color: var(--text); font-size: 14px; font-family: inherit; outline: none; }
+#searchInput:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(230,57,70,.1); }
+#cartBtn { position: relative; background: var(--accent); border: none; border-radius: 10px; padding: 9px 16px; color: #fff; font-weight: 700; font-size: 14px; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 7px; flex-shrink: 0; transition: filter .2s; box-shadow: 0 2px 8px rgba(230,57,70,.3); }
+#cartBtn:hover { filter: brightness(1.08); }
+#cartBadge { position: absolute; top: -6px; right: -6px; background: #1a1a1a; color: #fff; border-radius: 50%; width: 20px; height: 20px; font-size: 11px; font-weight: 800; display: none; align-items: center; justify-content: center; }
+#subBar { background: #fff; border-bottom: 1px solid var(--border); padding: 10px 20px; }
+#subBar .inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.cats { display: flex; gap: 7px; overflow-x: auto; padding-bottom: 2px; flex: 1; }
+.cats::-webkit-scrollbar { height: 3px; }
+.cat-btn { cursor: pointer; border: 1px solid var(--border); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; background: var(--bg2); color: var(--muted); font-family: inherit; transition: all .18s; }
+.cat-btn:hover { border-color: var(--accent); color: var(--accent); }
+.cat-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: 0 2px 8px rgba(230,57,70,.2); }
+#sortSelect { background: var(--bg2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 7px 12px; font-size: 13px; font-family: inherit; cursor: pointer; outline: none; }
+#sortSelect:hover { border-color: var(--accent); }
+#main { max-width: 1200px; margin: 0 auto; padding: 16px 20px 40px; }
+#resultCount { color: var(--muted); font-size: 13px; margin-bottom: 14px; }
+#grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 14px; transition: all .2s; display: flex; flex-direction: column; box-shadow: 0 1px 4px rgba(0,0,0,.05); }
+.card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(230,57,70,.1); }
+.card-cat { font-size: 9px; color: var(--dim); letter-spacing: .5px; text-transform: uppercase; margin-bottom: 4px; }
+.card-name { font-weight: 600; font-size: 14px; line-height: 1.4; flex: 1; color: #1a1a1a; }
+.card-note { display: inline-block; background: #fff3f0; border: 1px solid #ffd5cc; border-radius: 6px; padding: 2px 8px; font-size: 11px; color: #c0392b; margin-top: 8px; font-weight: 500; }
+.card-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
+.card-price { font-size: 19px; font-weight: 800; color: var(--price); }
+.add-btn { cursor: pointer; border: 1px solid rgba(230,57,70,.4); border-radius: 8px; padding: 7px 13px; font-size: 13px; font-weight: 600; font-family: inherit; background: #fff3f0; color: var(--accent); transition: all .18s; }
+.add-btn:hover { background: var(--accent); color: #fff; }
+.card-updated { font-size: 10px; color: var(--dim); margin-top: 8px; }
+#emptyMsg { text-align: center; color: var(--muted); padding: 60px 0; font-size: 15px; }
+#overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 40; backdrop-filter: blur(4px); }
+#cartPanel { display: none; position: fixed; right: 0; top: 0; bottom: 0; width: min(400px,100vw); background: #fff; border-left: 1px solid var(--border); box-shadow: -4px 0 24px rgba(0,0,0,.1); z-index: 50; flex-direction: column; animation: slideIn .25s ease; }
+@keyframes slideIn { from{transform:translateX(100%)}to{transform:translateX(0)} }
+.cart-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.cart-header h2 { font-weight: 800; font-size: 17px; }
+#closeCart { background: none; border: none; color: var(--muted); font-size: 22px; cursor: pointer; }
+#cartItems { flex: 1; overflow-y: auto; padding: 14px 20px; background: var(--bg); }
+.cart-empty { text-align: center; color: var(--dim); margin-top: 60px; }
+.cart-empty div { font-size: 44px; margin-bottom: 10px; }
+.cart-item { background: #fff; border-radius: 12px; padding: 12px; margin-bottom: 10px; border: 1px solid var(--border); }
+.ci-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.ci-name { font-weight: 600; font-size: 14px; }
+.ci-note { display: inline-block; background: #fff3f0; border-radius: 5px; padding: 1px 7px; font-size: 10px; color: #c0392b; margin-top: 3px; font-weight: 500; }
+.ci-remove { background: none; border: none; color: var(--dim); cursor: pointer; font-size: 16px; }
+.ci-bottom { display: flex; align-items: center; justify-content: space-between; }
+.qty-wrap { display: flex; align-items: center; gap: 10px; }
+.qty-btn { border: none; border-radius: 6px; width: 28px; height: 28px; font-size: 18px; font-weight: 700; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; }
+.qty-num { font-weight: 700; font-size: 16px; min-width: 22px; text-align: center; }
+.ci-price { font-weight: 700; color: var(--price); }
+.cart-footer { padding: 16px 20px; border-top: 1px solid var(--border); }
+.cart-total { display: flex; justify-content: space-between; margin-bottom: 14px; align-items: center; }
+.cart-total span:first-child { color: var(--muted); font-size: 14px; }
+.cart-total span:last-child { font-size: 22px; font-weight: 800; color: var(--price); }
+#confirmBtn { width: 100%; background: var(--accent); border: none; border-radius: 10px; padding: 13px; color: #fff; font-weight: 700; font-size: 15px; cursor: pointer; font-family: inherit; margin-bottom: 8px; box-shadow: 0 3px 10px rgba(230,57,70,.3); }
+#confirmBtn:hover { filter: brightness(1.08); }
+#clearBtn { width: 100%; background: none; border: 1px solid var(--border); border-radius: 10px; padding: 10px; color: var(--muted); font-weight: 500; font-size: 13px; cursor: pointer; font-family: inherit; }
+#clearBtn:hover { border-color: var(--accent); color: var(--accent); }
+@media (max-width:600px) { .logo h1{font-size:15px} #grid{grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px} .card-price{font-size:16px} }
 </style>
 </head>
 <body>
-
 <div id="header">
   <div class="header-inner">
-    <div class="logo">
-      <div class="logo-bar"></div>
-      <div>
-        <h1>Bảng Giá Hàng Hóa</h1>
-        <p id="productCount">102 sản phẩm • Cập nhật 28/05/2026</p>
-      </div>
-    </div>
-    <div class="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" placeholder="Tìm sản phẩm...">
-    </div>
-    <button id="cartBtn">
-      🛒 Giỏ hàng
-      <span id="cartBadge">0</span>
-    </button>
-  </div>
-  <div id="controls">
-    <div class="cats" id="catList"></div>
-    <select id="sortSelect">
-      <option value="default">Mặc định</option>
-      <option value="asc">Giá tăng dần</option>
-      <option value="desc">Giá giảm dần</option>
-      <option value="name">Tên A–Z</option>
-    </select>
+    <div class="logo"><div class="logo-bar"></div><div><h1>Bảng Giá Hàng Hóa</h1><p id="pCount">191 sản phẩm • Cập nhật 01/06/2026</p></div></div>
+    <div class="search-wrap"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="Tìm sản phẩm..."></div>
+    <button id="cartBtn">🛒 Giỏ hàng <span id="cartBadge">0</span></button>
   </div>
 </div>
-
-<div id="main">
-  <div id="resultCount"></div>
-  <div id="grid"></div>
-  <div id="emptyMsg" style="display:none">😕 Không tìm thấy sản phẩm nào.</div>
-</div>
-
+<div id="subBar"><div class="inner"><div class="cats" id="catList"></div>
+  <select id="sortSelect"><option value="default">Mặc định</option><option value="asc">Giá tăng dần</option><option value="desc">Giá giảm dần</option><option value="name">Tên A–Z</option></select>
+</div></div>
+<div id="main"><div id="resultCount"></div><div id="grid"></div><div id="emptyMsg" style="display:none">😕 Không tìm thấy sản phẩm nào.</div></div>
 <div id="overlay"></div>
 <div id="cartPanel">
-  <div class="cart-header">
-    <h2>🛒 Giỏ hàng (<span id="cartCount">0</span>)</h2>
-    <button id="closeCart">✕</button>
-  </div>
+  <div class="cart-header"><h2>🛒 Giỏ hàng (<span id="cartCount">0</span>)</h2><button id="closeCart">✕</button></div>
   <div id="cartItems"></div>
   <div class="cart-footer" id="cartFooter" style="display:none">
-    <div class="cart-total">
-      <span>Tổng cộng:</span>
-      <span id="cartTotal">0đ</span>
-    </div>
+    <div class="cart-total"><span>Tổng cộng:</span><span id="cartTotal">0đ</span></div>
     <button id="confirmBtn">✅ Xác nhận đơn hàng</button>
     <button id="clearBtn">Xóa giỏ hàng</button>
   </div>
 </div>
-
 <script>
 const products = [
-  {id:1,name:"Bò húc",price:15000,note:"",cat:"🥤 Nước uống",updated:"28/05/2026"},
-  {id:2,name:"C2",price:11000,note:"",cat:"🥤 Nước uống",updated:"28/05/2026"},
-  {id:3,name:"Sting đỏ",price:11000,note:"",cat:"🥤 Nước uống",updated:"28/05/2026"},
-  {id:4,name:"Sting vàng",price:11000,note:"",cat:"🥤 Nước uống",updated:"28/05/2026"},
-  {id:5,name:"Aqua",price:6000,note:"500 ml",cat:"🥤 Nước uống",updated:"28/05/2026"},
-  {id:6,name:"Aqua",price:10000,note:"1,5L",cat:"🥤 Nước uống",updated:"28/05/2026"},
-  {id:7,name:"Aqua",price:30000,note:"5L",cat:"🥤 Nước uống",updated:"28/05/2026"},
-  {id:8,name:"Bánh mì ruốc",price:6000,note:"",cat:"🍪 Bánh kẹo",updated:"28/05/2026"},
-  {id:9,name:"Mì Kokomi",price:5000,note:"90g",cat:"🍜 Mì & Bún",updated:""},
-  {id:10,name:"Mì Kokomi",price:4000,note:"65g",cat:"🍜 Mì & Bún",updated:""},
-  {id:11,name:"Mì Omachi",price:8000,note:"Gói",cat:"🍜 Mì & Bún",updated:""},
-  {id:12,name:"Mì Hảo Hảo",price:5000,note:"",cat:"🍜 Mì & Bún",updated:""},
-  {id:13,name:"Mì Cung Đình",price:11000,note:"Cốc",cat:"🍜 Mì & Bún",updated:""},
-  {id:14,name:"Mì Modern",price:11000,note:"Cốc",cat:"🍜 Mì & Bún",updated:""},
-  {id:15,name:"Mì Omachi",price:11000,note:"Cốc",cat:"🍜 Mì & Bún",updated:""},
-  {id:16,name:"Mì Omachi",price:15000,note:"Bát",cat:"🍜 Mì & Bún",updated:""},
-  {id:17,name:"Mì Cung Đình",price:15000,note:"Bát",cat:"🍜 Mì & Bún",updated:""},
-  {id:18,name:"Mì Kool Bbq",price:15000,note:"Bát",cat:"🍜 Mì & Bún",updated:""},
-  {id:19,name:"Phở cung đình",price:9000,note:"Gói bò",cat:"🍜 Mì & Bún",updated:""},
-  {id:20,name:"Phở cung đình",price:9000,note:"Gói gà",cat:"🍜 Mì & Bún",updated:""},
-  {id:21,name:"Hủ tiếu cung đình",price:9000,note:"Gói",cat:"🍜 Mì & Bún",updated:""},
-  {id:22,name:"Mì Cung Đình",price:8000,note:"Gói",cat:"🍜 Mì & Bún",updated:""},
-  {id:23,name:"Tăng lực 247",price:10000,note:"Lon",cat:"🥤 Nước uống",updated:""},
-  {id:24,name:"Tăng lực 247",price:10000,note:"Chai",cat:"🥤 Nước uống",updated:""},
-  {id:25,name:"Nutri",price:11000,note:"",cat:"🥤 Nước uống",updated:""},
-  {id:26,name:"Chanh dây",price:10000,note:"Lon",cat:"🥤 Nước uống",updated:""},
-  {id:27,name:"Trà bí đao",price:10000,note:"Lon",cat:"🥤 Nước uống",updated:""},
-  {id:28,name:"Me đá",price:10000,note:"",cat:"🥤 Nước uống",updated:""},
-  {id:29,name:"Ice+",price:10000,note:"",cat:"🥤 Nước uống",updated:""},
-  {id:30,name:"Nước dừa",price:10000,note:"Lon",cat:"🥤 Nước uống",updated:""},
-  {id:31,name:"Bia Hà Nội",price:14000,note:"",cat:"🥤 Nước uống",updated:""},
-  {id:32,name:"Sữa chua",price:6000,note:"",cat:"🥛 Sữa",updated:""},
-  {id:33,name:"Sữa TH",price:11000,note:"",cat:"🥛 Sữa",updated:""},
-  {id:34,name:"Cà phê lon birdy",price:11000,note:"",cat:"🥤 Nước uống",updated:""},
-  {id:35,name:"Nước yến",price:12000,note:"",cat:"🥤 Nước uống",updated:""},
-  {id:36,name:"Nước rong biển",price:10000,note:"",cat:"🥤 Nước uống",updated:""},
-  {id:37,name:"Coca-cola",price:10000,note:"Lon",cat:"🥤 Nước uống",updated:""},
-  {id:38,name:"Sữa Fami",price:6000,note:"",cat:"🥛 Sữa",updated:""},
-  {id:39,name:"Sữa izzi",price:8000,note:"",cat:"🥛 Sữa",updated:""},
-  {id:40,name:"Trà búp non 365",price:10000,note:"",cat:"🥤 Nước uống",updated:""},
-  {id:41,name:"Trà xanh 0 độ",price:11000,note:"",cat:"🥤 Nước uống",updated:""},
-  {id:42,name:"Trà tea +",price:10000,note:"",cat:"🥤 Nước uống",updated:""},
-  {id:43,name:"Sữa Milo",price:9000,note:"",cat:"🥛 Sữa",updated:""},
-  {id:44,name:"Bù nước bù khoáng Revive",price:10000,note:"",cat:"🥤 Nước uống",updated:""},
-  {id:45,name:"Revive chanh muối",price:10000,note:"",cat:"🥤 Nước uống",updated:""},
-  {id:46,name:"Coca-cola",price:10000,note:"Chai 390ml",cat:"🥤 Nước uống",updated:""},
-  {id:47,name:"Chanh muối",price:10000,note:"",cat:"🥤 Nước uống",updated:""},
-  {id:48,name:"Nước dừa",price:10000,note:"Chai",cat:"🥤 Nước uống",updated:""},
-  {id:49,name:"Number 1",price:10000,note:"",cat:"🥤 Nước uống",updated:""},
-  {id:50,name:"Trà latte",price:10000,note:"",cat:"🥤 Nước uống",updated:""},
-  {id:51,name:"Thạch dừa Joco",price:10000,note:"",cat:"🥤 Nước uống",updated:""},
-  {id:52,name:"Fuze tea",price:10000,note:"",cat:"🥤 Nước uống",updated:""},
-  {id:53,name:"Coca-cola",price:18000,note:"1.5L",cat:"🥤 Nước uống",updated:""},
-  {id:54,name:"Pepsi",price:18000,note:"1.5L",cat:"🥤 Nước uống",updated:""},
-  {id:55,name:"Sprite",price:17000,note:"1.5L",cat:"🥤 Nước uống",updated:""},
-  {id:56,name:"Bia Sài Gòn",price:14000,note:"",cat:"🥤 Nước uống",updated:""},
-  {id:57,name:"Bia 333",price:15000,note:"",cat:"🥤 Nước uống",updated:""},
-  {id:58,name:"Cà phê Highlands",price:15000,note:"",cat:"🥤 Nước uống",updated:""},
-  {id:59,name:"Trà Dr Thanh",price:11000,note:"",cat:"🥤 Nước uống",updated:""},
-  {id:60,name:"Coca-cola",price:22000,note:"1.95L",cat:"🥤 Nước uống",updated:""},
-  {id:61,name:"Fanta",price:17000,note:"1.5L",cat:"🥤 Nước uống",updated:""},
-  {id:62,name:"Mì chính",price:75000,note:"1kg",cat:"🌶️ Gia vị",updated:""},
-  {id:63,name:"Mì chính",price:40000,note:"454g",cat:"🌶️ Gia vị",updated:""},
-  {id:64,name:"Đường",price:25000,note:"",cat:"🌶️ Gia vị",updated:""},
-  {id:65,name:"Đường phèn",price:18000,note:"0.5kg",cat:"🌶️ Gia vị",updated:""},
-  {id:66,name:"Hạt nêm Chinsu",price:90000,note:"1.8kg",cat:"🌶️ Gia vị",updated:""},
-  {id:67,name:"Hạt nêm Chinsu",price:30000,note:"0.5kg",cat:"🌶️ Gia vị",updated:""},
-  {id:68,name:"Ngũ vị hương",price:1000,note:"",cat:"🌶️ Gia vị",updated:""},
-  {id:69,name:"Bột chiên giòn",price:8000,note:"",cat:"🌶️ Gia vị",updated:""},
-  {id:70,name:"Gia vị cá kho",price:8000,note:"",cat:"🌶️ Gia vị",updated:""},
-  {id:71,name:"Gia vị thịt kho tàu",price:8000,note:"",cat:"🌶️ Gia vị",updated:""},
-  {id:72,name:"Bột chiên xù",price:8000,note:"",cat:"🌶️ Gia vị",updated:""},
-  {id:73,name:"Mì gạo",price:15000,note:"",cat:"🍜 Mì & Bún",updated:""},
-  {id:74,name:"Miến",price:60000,note:"Túi 1kg",cat:"🍜 Mì & Bún",updated:""},
-  {id:75,name:"Bánh đa tròn",price:9000,note:"",cat:"🍜 Mì & Bún",updated:""},
-  {id:76,name:"Sữa Ông Thọ",price:20000,note:"Tuýp",cat:"🥛 Sữa",updated:""},
-  {id:77,name:"Cơm sấy",price:25000,note:"150g",cat:"🌶️ Gia vị",updated:""},
-  {id:78,name:"Cơm sấy",price:35000,note:"250g",cat:"🌶️ Gia vị",updated:""},
-  {id:79,name:"Bánh Chocopie",price:27000,note:"6 gói",cat:"🍪 Bánh kẹo",updated:""},
-  {id:80,name:"Bánh custas",price:11000,note:"2 gói",cat:"🍪 Bánh kẹo",updated:""},
-  {id:81,name:"Bánh mì bơ tỏi",price:33000,note:"",cat:"🍪 Bánh kẹo",updated:""},
-  {id:82,name:"Bánh chả Minh Thắng",price:15000,note:"",cat:"🍪 Bánh kẹo",updated:""},
-  {id:83,name:"Bánh dẻo cốm",price:15000,note:"",cat:"🍪 Bánh kẹo",updated:""},
-  {id:84,name:"Kẹo cà phê Kopiko",price:15000,note:"",cat:"🍪 Bánh kẹo",updated:""},
-  {id:85,name:"Kẹo dynamite",price:17000,note:"112.5g",cat:"🍪 Bánh kẹo",updated:""},
-  {id:86,name:"Bánh cream o",price:10000,note:"85g",cat:"🍪 Bánh kẹo",updated:""},
-  {id:87,name:"Kẹo gừng",price:8000,note:"",cat:"🍪 Bánh kẹo",updated:""},
-  {id:88,name:"Bắp rang bơ Mỹ",price:33000,note:"",cat:"🍪 Bánh kẹo",updated:""},
-  {id:89,name:"Bánh quy đũa",price:33000,note:"",cat:"🍪 Bánh kẹo",updated:""},
-  {id:90,name:"Kẹo alpenliebe",price:15000,note:"115.5g",cat:"🍪 Bánh kẹo",updated:""},
-  {id:91,name:"Xúc xích Ponnie",price:10000,note:"95g",cat:"🍪 Bánh kẹo",updated:""},
-  {id:92,name:"Xúc xích Ponnie",price:20000,note:"175g",cat:"🍪 Bánh kẹo",updated:""},
-  {id:93,name:"Cháo sườn non",price:10000,note:"",cat:"🍪 Bánh kẹo",updated:""},
-  {id:94,name:"Miến dong",price:25000,note:"250g",cat:"🍜 Mì & Bún",updated:""},
-  {id:95,name:"Mì dim dim",price:4000,note:"",cat:"🍜 Mì & Bún",updated:""},
-  {id:96,name:"Lương Khô",price:20000,note:"",cat:"🍪 Bánh kẹo",updated:""},
-  {id:97,name:"Cơm sấy",price:10000,note:"Gói nhỏ 3 miếng",cat:"🌶️ Gia vị",updated:""},
-  {id:98,name:"Gia vị lẩu Thái",price:11000,note:"",cat:"🌶️ Gia vị",updated:""},
-  {id:99,name:"Gia vị sườn xào chua ngọt",price:11000,note:"",cat:"🌶️ Gia vị",updated:""},
-];
-
-const ALL_CATS = ["Tất cả","🥤 Nước uống","🥛 Sữa","🍜 Mì & Bún","🍪 Bánh kẹo","🌶️ Gia vị"];
-let activeCategory = "Tất cả";
-let cart = [];
-
-function fmt(p) { return p.toLocaleString("vi-VN") + "đ"; }
-function norm(s) { return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""); }
-
-// Build category buttons
-const catList = document.getElementById("catList");
-ALL_CATS.forEach(cat => {
-  const btn = document.createElement("button");
-  btn.className = "cat-btn" + (cat === "Tất cả" ? " active" : "");
-  btn.textContent = cat;
-  btn.onclick = () => {
-    activeCategory = cat;
-    document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    render();
-  };
+  {id:1,name:'Bò húc',price:15000,note:'',cat:'🥤 Nước uống',updated:'28/05/2026'},
+  {id:2,name:'C2',price:11000,note:'',cat:'🥤 Nước uống',updated:'28/05/2026'},
+  {id:3,name:'Sting đỏ',price:11000,note:'',cat:'🥤 Nước uống',updated:'28/05/2026'},
+  {id:4,name:'Sting vàng',price:11000,note:'',cat:'🥤 Nước uống',updated:'28/05/2026'},
+  {id:5,name:'Aqua',price:6000,note:'500 ml',cat:'🥤 Nước uống',updated:'28/05/2026'},
+  {id:6,name:'Aqua',price:10000,note:'1,5L',cat:'🥤 Nước uống',updated:'28/05/2026'},
+  {id:7,name:'Aqua',price:30000,note:'5L',cat:'🥤 Nước uống',updated:'28/05/2026'},
+  {id:8,name:'Bánh mì ruốc',price:6000,note:'',cat:'🍪 Bánh kẹo',updated:'28/05/2026'},
+  {id:9,name:'Mì Kokomi',price:5000,note:'90g',cat:'🍜 Mì & Bún',updated:''},
+  {id:10,name:'Mì Kokomi',price:4000,note:'65g',cat:'🍜 Mì & Bún',updated:''},
+  {id:11,name:'Mì Omachi',price:8000,note:'Gói',cat:'🍜 Mì & Bún',updated:''},
+  {id:12,name:'Mì Hảo Hảo',price:5000,note:'',cat:'🍜 Mì & Bún',updated:''},
+  {id:13,name:'Mì Cung Đình',price:11000,note:'Cốc',cat:'🍜 Mì & Bún',updated:''},
+  {id:14,name:'Mì Modern',price:11000,note:'Cốc',cat:'🍜 Mì & Bún',updated:''},
+  {id:15,name:'Mì Omachi',price:11000,note:'Cốc',cat:'🍜 Mì & Bún',updated:''},
+  {id:16,name:'Mì Omachi',price:15000,note:'Bát',cat:'🍜 Mì & Bún',updated:''},
+  {id:17,name:'Mì Cung Đình',price:15000,note:'Bát',cat:'🍜 Mì & Bún',updated:''},
+  {id:18,name:'Mì Kool Bbq',price:15000,note:'Bát',cat:'🍜 Mì & Bún',updated:''},
+  {id:19,name:'Phở cung đình',price:9000,note:'Gói bò',cat:'🍜 Mì & Bún',updated:''},
+  {id:20,name:'Phở cung đình',price:9000,note:'Gói gà',cat:'🍜 Mì & Bún',updated:''},
+  {id:21,name:'Hủ tiếu cung đình',price:9000,note:'Gói',cat:'🍜 Mì & Bún',updated:''},
+  {id:22,name:'Mì Cung Đình',price:8000,note:'Gói',cat:'🍜 Mì & Bún',updated:''},
+  {id:23,name:'Tăng lực 247',price:10000,note:'Lon',cat:'🥤 Nước uống',updated:''},
+  {id:24,name:'Tăng lực 247',price:10000,note:'Chai',cat:'🥤 Nước uống',updated:''},
+  {id:25,name:'Nutri',price:11000,note:'',cat:'🥤 Nước uống',updated:''},
+  {id:26,name:'Chanh dây',price:10000,note:'Lon',cat:'🥤 Nước uống',updated:''},
+  {id:27,name:'Trà bí đao',price:10000,note:'Lon',cat:'🥤 Nước uống',updated:''},
+  {id:28,name:'Me đá',price:10000,note:'',cat:'🥤 Nước uống',updated:''},
+  {id:29,name:'Ice+',price:10000,note:'',cat:'🥤 Nước uống',updated:''},
+  {id:30,name:'Nước dừa',price:10000,note:'Lon',cat:'🥤 Nước uống',updated:''},
+  {id:31,name:'Bia Hà Nội',price:14000,note:'',cat:'🥤 Nước uống',updated:''},
+  {id:32,name:'Bia Hà Nội',price:0,note:'Thùng',cat:'🥤 Nước uống',updated:''},
+  {id:33,name:'Sữa chua',price:6000,note:'',cat:'🥛 Sữa',updated:''},
+  {id:34,name:'Sữa TH',price:11000,note:'',cat:'🥛 Sữa',updated:''},
+  {id:35,name:'Cà phê lon birdy',price:11000,note:'',cat:'☕ Cà phê',updated:''},
+  {id:36,name:'Nước yến',price:12000,note:'',cat:'🥤 Nước uống',updated:''},
+  {id:37,name:'Nước rong biển',price:10000,note:'',cat:'🥤 Nước uống',updated:''},
+  {id:38,name:'Coca-cola',price:10000,note:'Lon',cat:'🥤 Nước uống',updated:''},
+  {id:39,name:'Sữa Fami',price:6000,note:'',cat:'🥛 Sữa',updated:''},
+  {id:40,name:'Sữa izzi',price:8000,note:'',cat:'🥛 Sữa',updated:''},
+  {id:41,name:'Trà búp non 365',price:10000,note:'',cat:'🥤 Nước uống',updated:''},
+  {id:42,name:'Trà xanh 0 độ',price:11000,note:'',cat:'🥤 Nước uống',updated:''},
+  {id:43,name:'Trà tea +',price:10000,note:'',cat:'🥤 Nước uống',updated:''},
+  {id:44,name:'Sữa Milo',price:9000,note:'',cat:'🥛 Sữa',updated:''},
+  {id:45,name:'Bù nước bù khoáng revive',price:10000,note:'',cat:'🥤 Nước uống',updated:''},
+  {id:46,name:'Revive chanh muối',price:10000,note:'',cat:'🥤 Nước uống',updated:''},
+  {id:47,name:'Coca-cola',price:10000,note:'Chai 390ml',cat:'🥤 Nước uống',updated:''},
+  {id:48,name:'Chanh muối',price:10000,note:'',cat:'🥤 Nước uống',updated:''},
+  {id:49,name:'Nước dừa',price:10000,note:'Chai',cat:'🥤 Nước uống',updated:''},
+  {id:50,name:'Number 1',price:10000,note:'',cat:'🥤 Nước uống',updated:''},
+  {id:51,name:'Trà latte',price:10000,note:'',cat:'🥤 Nước uống',updated:''},
+  {id:52,name:'Thạch dừa joco',price:10000,note:'',cat:'🥤 Nước uống',updated:''},
+  {id:53,name:'Fuze tea',price:10000,note:'',cat:'🥤 Nước uống',updated:''},
+  {id:54,name:'Coca-cola',price:18000,note:'1.5L',cat:'🥤 Nước uống',updated:''},
+  {id:55,name:'Pepsi',price:18000,note:'1.5L',cat:'🥤 Nước uống',updated:''},
+  {id:56,name:'Sprite',price:17000,note:'1.5L',cat:'🥤 Nước uống',updated:''},
+  {id:57,name:'Bia Sài Gòn',price:14000,note:'',cat:'🥤 Nước uống',updated:''},
+  {id:58,name:'Bia 333',price:15000,note:'',cat:'🥤 Nước uống',updated:''},
+  {id:59,name:'Bia 333',price:0,note:'Thùng',cat:'🥤 Nước uống',updated:''},
+  {id:60,name:'Cà phê Highlands',price:15000,note:'',cat:'☕ Cà phê',updated:''},
+  {id:61,name:'Trà Dr Thanh',price:11000,note:'',cat:'🥤 Nước uống',updated:''},
+  {id:62,name:'Coca-cola',price:22000,note:'1.95L',cat:'🥤 Nước uống',updated:''},
+  {id:63,name:'Fanta',price:17000,note:'1.5L',cat:'🥤 Nước uống',updated:''},
+  {id:64,name:'Mì chính',price:75000,note:'1kg',cat:'🍜 Mì & Bún',updated:''},
+  {id:65,name:'Mì chính',price:40000,note:'454g',cat:'🍜 Mì & Bún',updated:''},
+  {id:66,name:'Đường',price:25000,note:'',cat:'🌶️ Gia vị',updated:''},
+  {id:67,name:'Đường phèn',price:18000,note:'0.5kg',cat:'🌶️ Gia vị',updated:''},
+  {id:68,name:'Hạt nêm Chinsu',price:90000,note:'1.8kg',cat:'🌶️ Gia vị',updated:''},
+  {id:69,name:'Hạt nêm Chinsu',price:30000,note:'0.5kg',cat:'🌶️ Gia vị',updated:''},
+  {id:70,name:'Ngũ vị hương',price:1000,note:'',cat:'🌶️ Gia vị',updated:''},
+  {id:71,name:'Bột chiên giòn',price:8000,note:'',cat:'🌶️ Gia vị',updated:''},
+  {id:72,name:'Gia vị cá kho',price:8000,note:'',cat:'🌶️ Gia vị',updated:''},
+  {id:73,name:'Gia vị thịt kho tàu',price:8000,note:'',cat:'🌶️ Gia vị',updated:''},
+  {id:74,name:'Bột chiên xù',price:8000,note:'',cat:'🌶️ Gia vị',updated:''},
+  {id:75,name:'Mì gạo',price:15000,note:'',cat:'🍜 Mì & Bún',updated:''},
+  {id:76,name:'Miến',price:60000,note:'Túi 1kg',cat:'🍜 Mì & Bún',updated:''},
+  {id:77,name:'Bánh đa tròn',price:9000,note:'',cat:'🍜 Mì & Bún',updated:''},
+  {id:78,name:'Sữa Ông Thọ',price:20000,note:'Tuýp',cat:'🥛 Sữa',updated:''},
+  {id:79,name:'Cơm sấy',price:25000,note:'150g',cat:'🌶️ Gia vị',updated:''},
+  {id:80,name:'Cơm sấy',price:35000,note:'250g',cat:'🌶️ Gia vị',updated:''},
+  {id:81,name:'Bánh Chocopie',price:27000,note:'6 gói',cat:'🍪 Bánh kẹo',updated:''},
+  {id:82,name:'Muối Hảo hảo',price:17000,note:'',cat:'🌶️ Gia vị',updated:''},
+  {id:83,name:'Bánh custas',price:11000,note:'2 gói',cat:'🍪 Bánh kẹo',updated:''},
+  {id:84,name:'Bánh mì bơ tỏi',price:33000,note:'',cat:'🍜 Mì & Bún',updated:''},
+  {id:85,name:'Bánh chả Minh Thắng',price:15000,note:'',cat:'🍪 Bánh kẹo',updated:''},
+  {id:86,name:'Bánh dẻo cốm',price:15000,note:'',cat:'🍪 Bánh kẹo',updated:''},
+  {id:87,name:'Kẹo cà phê kopiko',price:15000,note:'',cat:'🍪 Bánh kẹo',updated:''},
+  {id:88,name:'Kẹo dynamite',price:17000,note:'112.5g',cat:'🍪 Bánh kẹo',updated:''},
+  {id:89,name:'Bánh cream o',price:10000,note:'85g',cat:'🍪 Bánh kẹo',updated:''},
+  {id:90,name:'Kẹo gừng',price:8000,note:'',cat:'🍪 Bánh kẹo',updated:''},
+  {id:91,name:'Bắp rang bơ Mỹ',price:33000,note:'',cat:'🍪 Bánh kẹo',updated:''},
+  {id:92,name:'Bánh quy đũa',price:33000,note:'',cat:'🍪 Bánh kẹo',updated:''},
+  {id:93,name:'Kẹo alpenliebe',price:15000,note:'115.5g',cat:'🍪 Bánh kẹo',updated:''},
+  {id:94,name:'Xúc xích Ponnie',price:10000,note:'95g',cat:'🍪 Bánh kẹo',updated:''},
+  {id:95,name:'Xúc xích Ponnie',price:20000,note:'175g',cat:'🍪 Bánh kẹo',updated:''},
+  {id:96,name:'Cháo sườn non',price:10000,note:'',cat:'🍜 Mì & Bún',updated:''},
+  {id:97,name:'Miến dong',price:25000,note:'250g',cat:'🍜 Mì & Bún',updated:''},
+  {id:98,name:'Mì dim dim',price:4000,note:'',cat:'🍜 Mì & Bún',updated:''},
+  {id:99,name:'Lương Khô',price:20000,note:'',cat:'🍪 Bánh kẹo',updated:''},
+  {id:100,name:'Cơm sấy',price:10000,note:'Gói nhỏ 3 miếng',cat:'🌶️ Gia vị',updated:''},
+  {id:101,name:'Gia vị lẩu Thái',price:11000,note:'',cat:'🌶️ Gia vị',updated:''},
+  {id:102,name:'Gia vị sườn xào chua ngọt',price:11000,note:'',cat:'🌶️ Gia vị',updated:''},
+  {id:103,name:'Bia Sài Gòn',price:280000,note:'thùng',cat:'🥤 Nước uống',updated:'31/05/2026'},
+  {id:104,name:'Mì ba miền',price:5000,note:'',cat:'🍜 Mì & Bún',updated:'31/05/2026'},
+  {id:105,name:'Bánh Custas',price:55000,note:'12 gói',cat:'🍪 Bánh kẹo',updated:'31/05/2026'},
+  {id:106,name:'Thuốc lá Camel đen',price:28000,note:'',cat:'🚬 Thuốc lá',updated:'31/05/2026'},
+  {id:107,name:'Thuốc lá Camel vàng',price:17000,note:'Vàng đậm',cat:'🚬 Thuốc lá',updated:'31/05/2026'},
+  {id:108,name:'Thuốc lá Camel vàng',price:17000,note:'Vàng nhạt',cat:'🚬 Thuốc lá',updated:'31/05/2026'},
+  {id:109,name:'Thuốc lá Camel xanh',price:30000,note:'',cat:'🚬 Thuốc lá',updated:'31/05/2026'},
+  {id:110,name:'Thuốc lá Camel lạc đà to',price:40000,note:'',cat:'🚬 Thuốc lá',updated:'31/05/2026'},
+  {id:111,name:'Bánh Chocopie',price:52000,note:'12 gói',cat:'🍪 Bánh kẹo',updated:'31/05/2026'},
+  {id:112,name:'Diêm thống nhất',price:10000,note:'1 gói 10 bao',cat:'🚬 Thuốc lá',updated:'31/05/2026'},
+  {id:113,name:'Bánh Goute',price:45000,note:'16 gói',cat:'🍪 Bánh kẹo',updated:'31/05/2026'},
+  {id:114,name:'Bật lửa thống nhất',price:4000,note:'',cat:'🚬 Thuốc lá',updated:'31/05/2026'},
+  {id:115,name:'Bật lửa hoa việt',price:3000,note:'',cat:'🚬 Thuốc lá',updated:'31/05/2026'},
+  {id:116,name:'Thuốc lá Thăng Long mềm',price:14000,note:'Bao',cat:'🚬 Thuốc lá',updated:'31/05/2026'},
+  {id:117,name:'Thuốc lá Thăng Long mềm',price:135000,note:'Cây',cat:'🚬 Thuốc lá',updated:'31/05/2026'},
+  {id:118,name:'Thuốc lá Thăng Long cứng',price:15000,note:'',cat:'🚬 Thuốc lá',updated:'31/05/2026'},
+  {id:119,name:'Thuốc lá Thăng Long cứng',price:140000,note:'Cây',cat:'🚬 Thuốc lá',updated:'31/05/2026'},
+  {id:120,name:'Thuốc lá Thăng Long dẹp',price:16000,note:'',cat:'🚬 Thuốc lá',updated:'31/05/2026'},
+  {id:121,name:'Thuốc lá Sài Gòn bạc',price:20000,note:'',cat:'🚬 Thuốc lá',updated:'31/05/2026'},
+  {id:122,name:'Thuốc lá Sài Gòn xanh',price:19000,note:'',cat:'🚬 Thuốc lá',updated:'31/05/2026'},
+  {id:123,name:'Thuốc lá Sài Gòn bấm',price:27000,note:'',cat:'🚬 Thuốc lá',updated:'31/05/2026'},
+  {id:124,name:'Thuốc lá Vina',price:23000,note:'',cat:'🚬 Thuốc lá',updated:'31/05/2026'},
+  {id:125,name:'Thuốc lá Ba số Việt',price:20000,note:'',cat:'🚬 Thuốc lá',updated:'31/05/2026'},
+  {id:126,name:'Cafe G7',price:4000,note:'',cat:'☕ Cà phê',updated:'31/05/2026'},
+  {id:127,name:'Cafe G7',price:70000,note:'Hộp',cat:'☕ Cà phê',updated:'31/05/2026'},
+  {id:128,name:'Pin',price:10000,note:'Vỉ',cat:'🔧 Đồ dùng khác',updated:'31/05/2026'},
+  {id:129,name:'Xúc xích xuxifarm',price:2000,note:'',cat:'🍪 Bánh kẹo',updated:'31/05/2026'},
+  {id:130,name:'Kẹo mút',price:1500,note:'',cat:'🍪 Bánh kẹo',updated:'31/05/2026'},
+  {id:131,name:'Lạc bóc',price:80000,note:'',cat:'🍪 Bánh kẹo',updated:'31/05/2026'},
+  {id:132,name:'Kẹo cao su cool air',price:1000,note:'',cat:'🍪 Bánh kẹo',updated:'31/05/2026'},
+  {id:133,name:'Kẹo cao su doublemint',price:5000,note:'',cat:'🍪 Bánh kẹo',updated:'31/05/2026'},
+  {id:134,name:'Socola đồng tiền',price:1000,note:'',cat:'🍪 Bánh kẹo',updated:'31/05/2026'},
+  {id:135,name:'Kẹo alpenliebe',price:5000,note:'Phong',cat:'🍪 Bánh kẹo',updated:'31/05/2026'},
+  {id:136,name:'Bánh mì nhân cốm',price:5000,note:'',cat:'🍜 Mì & Bún',updated:'31/05/2026'},
+  {id:137,name:'Bánh mì nhân socola',price:7000,note:'',cat:'🍜 Mì & Bún',updated:'31/05/2026'},
+  {id:138,name:'Kẹo dẻo',price:5000,note:'',cat:'🍪 Bánh kẹo',updated:'31/05/2026'},
+  {id:139,name:'Bimbim cá',price:10000,note:'',cat:'🍪 Bánh kẹo',updated:'31/05/2026'},
+  {id:140,name:'Bỏng ngô',price:10000,note:'Cốc',cat:'🍪 Bánh kẹo',updated:'31/05/2026'},
+  {id:141,name:'Trứng gà',price:3000,note:'Quả',cat:'🍪 Bánh kẹo',updated:'31/05/2026'},
+  {id:142,name:'Trứng gà',price:30000,note:'1 chục',cat:'🍪 Bánh kẹo',updated:'31/05/2026'},
+  {id:143,name:'Bài tây',price:10000,note:'',cat:'🔧 Đồ dùng khác',updated:'31/05/2026'},
+  {id:144,name:'Bài chắn',price:10000,note:'',cat:'🔧 Đồ dùng khác',updated:'31/05/2026'},
+  {id:145,name:'Keo 502',price:6000,note:'',cat:'🔧 Đồ dùng khác',updated:'31/05/2026'},
+  {id:146,name:'Xà phòng lifebuoy',price:17000,note:'',cat:'🧴 Vệ sinh cá nhân',updated:'31/05/2026'},
+  {id:147,name:'Xà phòng enchanteur',price:18000,note:'',cat:'🧴 Vệ sinh cá nhân',updated:'31/05/2026'},
+  {id:148,name:'Dầu gội thái dương',price:60000,note:'Chai',cat:'🧴 Vệ sinh cá nhân',updated:'31/05/2026'},
+  {id:149,name:'Xà phòng may',price:15000,note:'',cat:'🧴 Vệ sinh cá nhân',updated:'31/05/2026'},
+  {id:150,name:'Dầu gội Sunsilk',price:75000,note:'Chai',cat:'🧴 Vệ sinh cá nhân',updated:'31/05/2026'},
+  {id:151,name:'Rượu Vodka Men',price:40000,note:'',cat:'🥤 Nước uống',updated:'31/05/2026'},
+  {id:152,name:'Hương',price:5000,note:'bé',cat:'🕯️ Đồ thờ cúng',updated:'31/05/2026'},
+  {id:153,name:'Hương',price:10000,note:'To',cat:'🕯️ Đồ thờ cúng',updated:'31/05/2026'},
+  {id:154,name:'Lễ vàng mã',price:10000,note:'1 chục',cat:'🕯️ Đồ thờ cúng',updated:'31/05/2026'},
+  {id:155,name:'Chai rượu lễ',price:10000,note:'',cat:'🕯️ Đồ thờ cúng',updated:'31/05/2026'},
+  {id:156,name:'Dầu gội Sunsilk',price:1500,note:'Gói',cat:'🧴 Vệ sinh cá nhân',updated:'31/05/2026'},
+  {id:157,name:'Dầu xả Sunsilk',price:1500,note:'Gói',cat:'🧴 Vệ sinh cá nhân',updated:'31/05/2026'},
+  {id:158,name:'Dầu gội Clear',price:2000,note:'Gói',cat:'🧴 Vệ sinh cá nhân',updated:'31/05/2026'},
+  {id:159,name:'Dầu gội Enchanter',price:2000,note:'Gói',cat:'🧴 Vệ sinh cá nhân',updated:'31/05/2026'},
+  {id:160,name:'Dầu gội Dove',price:2000,note:'Gói',cat:'🧴 Vệ sinh cá nhân',updated:'31/05/2026'},
+  {id:161,name:'Nến cây',price:10000,note:'1 đôi',cat:'🕯️ Đồ thờ cúng',updated:'31/05/2026'},
+  {id:162,name:'Khăn mặt',price:15000,note:'Loại không bao bì',cat:'🧴 Vệ sinh cá nhân',updated:'31/05/2026'},
+  {id:163,name:'Khăn mặt',price:25000,note:'Loại bao bì',cat:'🧴 Vệ sinh cá nhân',updated:'31/05/2026'},
+  {id:164,name:'Kem đánh răng Colgate',price:27000,note:'',cat:'🧴 Vệ sinh cá nhân',updated:'31/05/2026'},
+  {id:165,name:'Kem đánh răng PS',price:37000,note:'',cat:'🧴 Vệ sinh cá nhân',updated:'31/05/2026'},
+  {id:166,name:'Găng tay nhựa vàng',price:20000,note:'',cat:'🧴 Vệ sinh cá nhân',updated:'31/05/2026'},
+  {id:167,name:'Găng tay nhựa trong',price:20000,note:'',cat:'🧴 Vệ sinh cá nhân',updated:'31/05/2026'},
+  {id:168,name:'Cốc nhựa dùng một lần',price:1000,note:'',cat:'🧴 Vệ sinh cá nhân',updated:'31/05/2026'},
+  {id:169,name:'Nước tương Chinsu tỏi ớt',price:20000,note:'',cat:'🌶️ Gia vị',updated:'31/05/2026'},
+  {id:170,name:'Bột giặt Đức Giang',price:27000,note:'700g',cat:'🧴 Vệ sinh cá nhân',updated:'31/05/2026'},
+  {id:171,name:'Bột giặt Đức Giang',price:90000,note:'3kg',cat:'🧴 Vệ sinh cá nhân',updated:'31/05/2026'},
+  {id:172,name:'Mắm tôm',price:10000,note:'',cat:'🌶️ Gia vị',updated:'31/05/2026'},
+  {id:173,name:'Dấm trắng Trung Thành',price:12000,note:'',cat:'🌶️ Gia vị',updated:'31/05/2026'},
+  {id:174,name:'Nước mắm ông Tây',price:20000,note:'',cat:'🌶️ Gia vị',updated:'31/05/2026'},
+  {id:175,name:'Nước mắm madame lân',price:33000,note:'',cat:'🌶️ Gia vị',updated:'31/05/2026'},
+  {id:176,name:'Nước mắm Nam Ngư',price:37000,note:'',cat:'🌶️ Gia vị',updated:'31/05/2026'},
+  {id:177,name:'Tương ớt Chinsu',price:32000,note:'500g',cat:'🌶️ Gia vị',updated:'31/05/2026'},
+  {id:178,name:'Tương ớt Chinsu',price:18000,note:'250g',cat:'🌶️ Gia vị',updated:'31/05/2026'},
+  {id:179,name:'Bột canh i ốt Hải Châu',price:5000,note:'',cat:'🌶️ Gia vị',updated:'31/05/2026'},
+  {id:180,name:'Muối trắng',price:8000,note:'1kg',cat:'🌶️ Gia vị',updated:'31/05/2026'},
+  {id:181,name:'Giấy ăn hàng không',price:52000,note:'Gói vuông',cat:'🧻 Giấy & Vệ sinh',updated:'31/05/2026'},
+  {id:182,name:'Giấy ăn hàng không',price:50000,note:'1 dây Cuộn',cat:'🧻 Giấy & Vệ sinh',updated:'31/05/2026'},
+  {id:183,name:'Giấy vệ sinh Hà Nội silk',price:80000,note:'',cat:'🧻 Giấy & Vệ sinh',updated:'31/05/2026'},
+  {id:184,name:'Giấy ăn Việt Nga',price:20000,note:'Gói dài',cat:'🧻 Giấy & Vệ sinh',updated:'31/05/2026'},
+  {id:185,name:'Giấy ăn Gia Khang',price:7000,note:'Gói ngắn',cat:'🧻 Giấy & Vệ sinh',updated:'31/05/2026'},
+  {id:186,name:'Giấy ăn gấu trúc',price:5000,note:'Gói ngắn',cat:'🧻 Giấy & Vệ sinh',updated:'31/05/2026'},
+  {id:187,name:'Áo mưa bộ',price:25000,note:'',cat:'🔧 Đồ dùng khác',updated:'31/05/2026'},
+  {id:188,name:'Áo mưa giấy',price:10000,note:'',cat:'🔧 Đồ dùng khác',updated:'31/05/2026'},
+  {id:189,name:'Sữa fristi',price:25000,note:'Vỉ',cat:'🥛 Sữa',updated:'31/05/2026'},
+  {id:190,name:'Keo dính chuột',price:10000,note:'',cat:'🔧 Đồ dùng khác',updated:'31/05/2026'},
+  {id:191,name:'Sữa Ông Thọ',price:25000,note:'Lon',cat:'🥛 Sữa',updated:'31/05/2026'},];
+const ALL_CATS=["Tất cả","🥤 Nước uống","🥛 Sữa","☕ Cà phê","🍜 Mì & Bún","🍪 Bánh kẹo","🌶️ Gia vị","🚬 Thuốc lá","🕯️ Đồ thờ cúng","🧴 Vệ sinh cá nhân","🧻 Giấy & Vệ sinh","🔧 Đồ dùng khác"];
+let activeCategory="Tất cả",cart=[];
+function fmt(p){return p.toLocaleString("vi-VN")+"đ"}
+function norm(s){return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")}
+const catList=document.getElementById("catList");
+ALL_CATS.forEach(cat=>{
+  const btn=document.createElement("button");
+  btn.className="cat-btn"+(cat==="Tất cả"?" active":"");
+  btn.textContent=cat;
+  btn.onclick=()=>{activeCategory=cat;document.querySelectorAll(".cat-btn").forEach(b=>b.classList.remove("active"));btn.classList.add("active");render();};
   catList.appendChild(btn);
 });
-
-function getFiltered() {
-  const q = norm(document.getElementById("searchInput").value.trim());
-  const sort = document.getElementById("sortSelect").value;
-  let list = products.filter(p => {
-    const matchQ = !q || norm(p.name).includes(q);
-    const matchC = activeCategory === "Tất cả" || p.cat === activeCategory;
-    return matchQ && matchC;
+function getFiltered(){
+  const q=norm(document.getElementById("searchInput").value.trim());
+  const sort=document.getElementById("sortSelect").value;
+  let list=products.filter(p=>{
+    const mQ=!q||norm(p.name).includes(q)||norm(p.note||"").includes(q);
+    const mC=activeCategory==="Tất cả"||p.cat===activeCategory;
+    return mQ&&mC;
   });
-  if (sort === "asc") list.sort((a,b) => a.price - b.price);
-  else if (sort === "desc") list.sort((a,b) => b.price - a.price);
-  else if (sort === "name") list.sort((a,b) => a.name.localeCompare(b.name,"vi"));
+  if(sort==="asc")list.sort((a,b)=>a.price-b.price);
+  else if(sort==="desc")list.sort((a,b)=>b.price-a.price);
+  else if(sort==="name")list.sort((a,b)=>a.name.localeCompare(b.name,"vi"));
   return list;
 }
-
-function render() {
-  const list = getFiltered();
-  const grid = document.getElementById("grid");
-  const empty = document.getElementById("emptyMsg");
-  document.getElementById("resultCount").textContent = list.length ? `Hiển thị ${list.length} sản phẩm` : "";
-  if (!list.length) { grid.innerHTML = ""; empty.style.display = "block"; return; }
-  empty.style.display = "none";
-  grid.innerHTML = list.map(p => `
+function render(){
+  const list=getFiltered();
+  const grid=document.getElementById("grid");
+  const empty=document.getElementById("emptyMsg");
+  document.getElementById("resultCount").textContent=list.length?`Hiển thị ${list.length} sản phẩm`:"";
+  if(!list.length){grid.innerHTML="";empty.style.display="block";return;}
+  empty.style.display="none";
+  grid.innerHTML=list.map(p=>`
     <div class="card">
       <div class="card-cat">${p.cat}</div>
       <div class="card-name">${p.name}</div>
-      ${p.note ? `<span class="card-note">${p.note}</span>` : ""}
+      ${p.note?`<span class="card-note">${p.note}</span>`:""}
       <div class="card-bottom">
         <span class="card-price">${fmt(p.price)}</span>
-        <button class="add-btn" onclick="addToCart(${p.id},'${p.note}')">+ Thêm</button>
+        <button class="add-btn" onclick="addToCart(${p.id},'${(p.note||"").replace(/\\/g,"\\\\").replace(/'/g,"\\'")}')">+ Thêm</button>
       </div>
-      ${p.updated ? `<div class="card-updated">🕐 ${p.updated}</div>` : ""}
-    </div>
-  `).join("");
+      ${p.updated?`<div class="card-updated">🕐 ${p.updated}</div>`:""}
+    </div>`).join("");
 }
-
-function addToCart(id, note) {
-  const key = id + "-" + note;
-  const product = products.find(p => p.id === id && p.note === note);
-  const existing = cart.find(c => c.key === key);
-  if (existing) existing.qty++;
-  else cart.push({...product, key, qty: 1});
+function addToCart(id,note){
+  const key=id+"-"+note;
+  const product=products.find(p=>p.id===id&&(p.note||"")===note);
+  if(!product)return;
+  const existing=cart.find(c=>c.key===key);
+  if(existing)existing.qty++;else cart.push({...product,key,qty:1});
   updateCartUI();
 }
-
-function removeFromCart(key) {
-  cart = cart.filter(c => c.key !== key);
-  updateCartUI();
-}
-
-function changeQty(key, delta) {
-  cart = cart.map(c => c.key === key ? {...c, qty: c.qty + delta} : c).filter(c => c.qty > 0);
-  updateCartUI();
-}
-
-function updateCartUI() {
-  const count = cart.reduce((s,c) => s + c.qty, 0);
-  const total = cart.reduce((s,c) => s + c.price * c.qty, 0);
-  const badge = document.getElementById("cartBadge");
-  badge.textContent = count;
-  badge.style.display = count ? "flex" : "none";
-  document.getElementById("cartCount").textContent = count;
-  document.getElementById("cartTotal").textContent = fmt(total);
-  document.getElementById("cartFooter").style.display = cart.length ? "block" : "none";
-  const items = document.getElementById("cartItems");
-  if (!cart.length) {
-    items.innerHTML = `<div class="cart-empty"><div>🛒</div><p>Giỏ hàng đang trống</p></div>`;
-    return;
-  }
-  items.innerHTML = cart.map(c => `
+function removeFromCart(key){cart=cart.filter(c=>c.key!==key);updateCartUI();}
+function changeQty(key,delta){cart=cart.map(c=>c.key===key?{...c,qty:c.qty+delta}:c).filter(c=>c.qty>0);updateCartUI();}
+function updateCartUI(){
+  const count=cart.reduce((s,c)=>s+c.qty,0);
+  const total=cart.reduce((s,c)=>s+c.price*c.qty,0);
+  const badge=document.getElementById("cartBadge");
+  badge.textContent=count;badge.style.display=count?"flex":"none";
+  document.getElementById("cartCount").textContent=count;
+  document.getElementById("cartTotal").textContent=fmt(total);
+  document.getElementById("cartFooter").style.display=cart.length?"block":"none";
+  const items=document.getElementById("cartItems");
+  if(!cart.length){items.innerHTML='<div class="cart-empty"><div>🛒</div><p>Giỏ hàng đang trống</p></div>';return;}
+  items.innerHTML=cart.map(c=>`
     <div class="cart-item">
       <div class="ci-top">
-        <div>
-          <div class="ci-name">${c.name}</div>
-          ${c.note ? `<span class="ci-note">${c.note}</span>` : ""}
-        </div>
+        <div><div class="ci-name">${c.name}</div>${c.note?`<span class="ci-note">${c.note}</span>`:""}</div>
         <button class="ci-remove" onclick="removeFromCart('${c.key}')">✕</button>
       </div>
       <div class="ci-bottom">
         <div class="qty-wrap">
-          <button class="qty-btn" style="background:#252530;color:#f0ece4" onclick="changeQty('${c.key}',-1)">−</button>
+          <button class="qty-btn" style="background:#eeeee8;color:#1a1a1a" onclick="changeQty('${c.key}',-1)">−</button>
           <span class="qty-num">${c.qty}</span>
           <button class="qty-btn" style="background:#e63946;color:#fff" onclick="changeQty('${c.key}',1)">+</button>
         </div>
-        <span class="ci-price">${fmt(c.price * c.qty)}</span>
+        <span class="ci-price">${fmt(c.price*c.qty)}</span>
       </div>
-    </div>
-  `).join("");
+    </div>`).join("");
 }
-
-function openCart() {
-  document.getElementById("overlay").style.display = "block";
-  document.getElementById("cartPanel").style.display = "flex";
-  updateCartUI();
-}
-function closeCart() {
-  document.getElementById("overlay").style.display = "none";
-  document.getElementById("cartPanel").style.display = "none";
-}
-
-document.getElementById("cartBtn").onclick = openCart;
-document.getElementById("closeCart").onclick = closeCart;
-document.getElementById("overlay").onclick = closeCart;
-document.getElementById("searchInput").oninput = render;
-document.getElementById("sortSelect").onchange = render;
-document.getElementById("confirmBtn").onclick = () => { cart = []; updateCartUI(); closeCart(); alert("✅ Đã xác nhận đơn hàng!"); };
-document.getElementById("clearBtn").onclick = () => { cart = []; updateCartUI(); };
-
-render();
-updateCartUI();
+function openCart(){document.getElementById("overlay").style.display="block";document.getElementById("cartPanel").style.display="flex";updateCartUI();}
+function closeCart(){document.getElementById("overlay").style.display="none";document.getElementById("cartPanel").style.display="none";}
+document.getElementById("cartBtn").onclick=openCart;
+document.getElementById("closeCart").onclick=closeCart;
+document.getElementById("overlay").onclick=closeCart;
+document.getElementById("searchInput").oninput=render;
+document.getElementById("sortSelect").onchange=render;
+document.getElementById("confirmBtn").onclick=()=>{cart=[];updateCartUI();closeCart();alert("✅ Đã xác nhận đơn hàng!");};
+document.getElementById("clearBtn").onclick=()=>{cart=[];updateCartUI();};
+render();updateCartUI();
 </script>
 </body>
 </html>
