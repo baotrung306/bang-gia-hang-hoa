@@ -30,8 +30,7 @@ body { font-family: 'Be Vietnam Pro', sans-serif; background: var(--bg); color: 
 .cat-btn { cursor: pointer; border: 1px solid var(--border); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; background: var(--bg2); color: var(--muted); font-family: inherit; transition: all .18s; }
 .cat-btn:hover { border-color: var(--accent); color: var(--accent); }
 .cat-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: 0 2px 8px rgba(230,57,70,.2); }
-#sortSelect { background: var(--bg2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 7px 12px; font-size: 13px; font-family: inherit; cursor: pointer; outline: none; }
-#sortSelect:hover { border-color: var(--accent); }
+
 #main { max-width: 1200px; margin: 0 auto; padding: 16px 20px 40px; }
 #resultCount { color: var(--muted); font-size: 13px; margin-bottom: 14px; }
 #grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
@@ -84,9 +83,7 @@ body { font-family: 'Be Vietnam Pro', sans-serif; background: var(--bg); color: 
     <button id="cartBtn">🛒 Giỏ hàng <span id="cartBadge">0</span></button>
   </div>
 </div>
-<div id="subBar"><div class="inner"><div class="cats" id="catList"></div>
-  <select id="sortSelect"><option value="default">Mặc định</option><option value="asc">Giá tăng dần</option><option value="desc">Giá giảm dần</option><option value="name">Tên A–Z</option></select>
-</div></div>
+<div id="subBar"><div class="inner"><div class="cats" id="catList"></div></div></div>
 <div id="main"><div id="resultCount"></div><div id="grid"></div><div id="emptyMsg" style="display:none">😕 Không tìm thấy sản phẩm nào.</div></div>
 <div id="overlay"></div>
 <div id="cartPanel">
@@ -305,15 +302,11 @@ ALL_CATS.forEach(cat=>{
 });
 function getFiltered(){
   const q=norm(document.getElementById("searchInput").value.trim());
-  const sort=document.getElementById("sortSelect").value;
   let list=products.filter(p=>{
     const mQ=!q||norm(p.name).includes(q)||norm(p.note||"").includes(q);
     const mC=activeCategory==="Tất cả"||p.cat===activeCategory;
     return mQ&&mC;
   });
-  if(sort==="asc")list.sort((a,b)=>a.price-b.price);
-  else if(sort==="desc")list.sort((a,b)=>b.price-a.price);
-  else if(sort==="name")list.sort((a,b)=>a.name.localeCompare(b.name,"vi"));
   return list;
 }
 function render(){
@@ -377,7 +370,6 @@ document.getElementById("cartBtn").onclick=openCart;
 document.getElementById("closeCart").onclick=closeCart;
 document.getElementById("overlay").onclick=closeCart;
 document.getElementById("searchInput").oninput=render;
-document.getElementById("sortSelect").onchange=render;
 document.getElementById("confirmBtn").onclick=()=>{cart=[];updateCartUI();closeCart();alert("✅ Đã xác nhận đơn hàng!");};
 document.getElementById("clearBtn").onclick=()=>{cart=[];updateCartUI();};
 render();updateCartUI();
