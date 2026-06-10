@@ -78,7 +78,7 @@ body { font-family: 'Be Vietnam Pro', sans-serif; background: var(--bg); color: 
 <body>
 <div id="header">
   <div class="header-inner">
-    <div class="logo"><div class="logo-bar"></div><div><h1>Bảng Giá Hàng Hóa</h1><p id="pCount">191 sản phẩm • Cập nhật 01/06/2026</p></div></div>
+    <div class="logo"><div class="logo-bar"></div><div><h1>Bảng Giá Hàng Hóa</h1><p id="pCount">191 sản phẩm • Cập nhật 09/06/2026</p></div></div>
     <div class="search-wrap"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="Tìm sản phẩm..."></div>
     <button id="cartBtn">🛒 Giỏ hàng <span id="cartBadge">0</span></button>
   </div>
@@ -98,13 +98,13 @@ body { font-family: 'Be Vietnam Pro', sans-serif; background: var(--bg); color: 
 <script>
 const products = [
   {id:1,name:'Bò húc',price:15000,note:'',cat:'🥤 Nước uống',updated:'28/05/2026'},
-  {id:2,name:'C2',price:11000,note:'',cat:'🥤 Nước uống',updated:'28/05/2026'},
+  {id:2,name:'C2',price:10000,note:'',cat:'🥤 Nước uống',updated:'28/05/2026'},
   {id:3,name:'Sting đỏ',price:11000,note:'',cat:'🥤 Nước uống',updated:'28/05/2026'},
-  {id:4,name:'Sting vàng',price:11000,note:'',cat:'🥤 Nước uống',updated:'28/05/2026'},
+  {id:4,name:'Sting vàng',price:10000,note:'',cat:'🥤 Nước uống',updated:'28/05/2026'},
   {id:5,name:'Aqua',price:6000,note:'500 ml',cat:'🥤 Nước uống',updated:'28/05/2026'},
   {id:6,name:'Aqua',price:10000,note:'1,5L',cat:'🥤 Nước uống',updated:'28/05/2026'},
   {id:7,name:'Aqua',price:30000,note:'5L',cat:'🥤 Nước uống',updated:'28/05/2026'},
-  {id:8,name:'Bánh mì ruốc',price:6000,note:'',cat:'🍪 Bánh kẹo',updated:'28/05/2026'},
+  {id:8,name:'Bánh mì ruốc',price:6000,note:'',cat:'🍜 Mì & Bún',updated:'28/05/2026'},
   {id:9,name:'Mì Kokomi',price:5000,note:'90g',cat:'🍜 Mì & Bún',updated:''},
   {id:10,name:'Mì Kokomi',price:4000,note:'65g',cat:'🍜 Mì & Bún',updated:''},
   {id:11,name:'Mì Omachi',price:8000,note:'Gói',cat:'🍜 Mì & Bún',updated:''},
@@ -121,14 +121,14 @@ const products = [
   {id:22,name:'Mì Cung Đình',price:8000,note:'Gói',cat:'🍜 Mì & Bún',updated:''},
   {id:23,name:'Tăng lực 247',price:10000,note:'Lon',cat:'🥤 Nước uống',updated:''},
   {id:24,name:'Tăng lực 247',price:10000,note:'Chai',cat:'🥤 Nước uống',updated:''},
-  {id:25,name:'Nutri',price:11000,note:'',cat:'🥤 Nước uống',updated:''},
+  {id:25,name:'Nutri',price:10000,note:'',cat:'🥤 Nước uống',updated:''},
   {id:26,name:'Chanh dây',price:10000,note:'Lon',cat:'🥤 Nước uống',updated:''},
   {id:27,name:'Trà bí đao',price:10000,note:'Lon',cat:'🥤 Nước uống',updated:''},
   {id:28,name:'Me đá',price:10000,note:'',cat:'🥤 Nước uống',updated:''},
   {id:29,name:'Ice+',price:10000,note:'',cat:'🥤 Nước uống',updated:''},
   {id:30,name:'Nước dừa',price:10000,note:'Lon',cat:'🥤 Nước uống',updated:''},
   {id:31,name:'Bia Hà Nội',price:14000,note:'',cat:'🥤 Nước uống',updated:''},
-  {id:32,name:'Bia Hà Nội',price:0,note:'Thùng',cat:'🥤 Nước uống',updated:''},
+  {id:32,name:'Bia Hà Nội',price:280000,note:'Thùng',cat:'🥤 Nước uống',updated:''},
   {id:33,name:'Sữa chua',price:6000,note:'',cat:'🥛 Sữa',updated:''},
   {id:34,name:'Sữa TH',price:11000,note:'',cat:'🥛 Sữa',updated:''},
   {id:35,name:'Cà phê lon birdy',price:11000,note:'',cat:'☕ Cà phê',updated:''},
@@ -138,7 +138,7 @@ const products = [
   {id:39,name:'Sữa Fami',price:6000,note:'',cat:'🥛 Sữa',updated:''},
   {id:40,name:'Sữa izzi',price:8000,note:'',cat:'🥛 Sữa',updated:''},
   {id:41,name:'Trà búp non 365',price:10000,note:'',cat:'🥤 Nước uống',updated:''},
-  {id:42,name:'Trà xanh 0 độ',price:11000,note:'',cat:'🥤 Nước uống',updated:''},
+  {id:42,name:'Trà xanh 0 độ',price:10000,note:'',cat:'🥤 Nước uống',updated:''},
   {id:43,name:'Trà tea +',price:10000,note:'',cat:'🥤 Nước uống',updated:''},
   {id:44,name:'Sữa Milo',price:9000,note:'',cat:'🥛 Sữa',updated:''},
   {id:45,name:'Bù nước bù khoáng revive',price:10000,note:'',cat:'🥤 Nước uống',updated:''},
@@ -146,7 +146,7 @@ const products = [
   {id:47,name:'Coca-cola',price:10000,note:'Chai 390ml',cat:'🥤 Nước uống',updated:''},
   {id:48,name:'Chanh muối',price:10000,note:'',cat:'🥤 Nước uống',updated:''},
   {id:49,name:'Nước dừa',price:10000,note:'Chai',cat:'🥤 Nước uống',updated:''},
-  {id:50,name:'Number 1',price:10000,note:'',cat:'🥤 Nước uống',updated:''},
+  {id:50,name:'Number 1',price:11000,note:'',cat:'🥤 Nước uống',updated:''},
   {id:51,name:'Trà latte',price:10000,note:'',cat:'🥤 Nước uống',updated:''},
   {id:52,name:'Thạch dừa joco',price:10000,note:'',cat:'🥤 Nước uống',updated:''},
   {id:53,name:'Fuze tea',price:10000,note:'',cat:'🥤 Nước uống',updated:''},
@@ -155,7 +155,7 @@ const products = [
   {id:56,name:'Sprite',price:17000,note:'1.5L',cat:'🥤 Nước uống',updated:''},
   {id:57,name:'Bia Sài Gòn',price:14000,note:'',cat:'🥤 Nước uống',updated:''},
   {id:58,name:'Bia 333',price:15000,note:'',cat:'🥤 Nước uống',updated:''},
-  {id:59,name:'Bia 333',price:0,note:'Thùng',cat:'🥤 Nước uống',updated:''},
+  {id:59,name:'Bia 333',price:290000,note:'Thùng',cat:'🥤 Nước uống',updated:''},
   {id:60,name:'Cà phê Highlands',price:15000,note:'',cat:'☕ Cà phê',updated:''},
   {id:61,name:'Trà Dr Thanh',price:11000,note:'',cat:'🥤 Nước uống',updated:''},
   {id:62,name:'Coca-cola',price:22000,note:'1.95L',cat:'🥤 Nước uống',updated:''},
@@ -166,7 +166,7 @@ const products = [
   {id:67,name:'Đường phèn',price:18000,note:'0.5kg',cat:'🌶️ Gia vị',updated:''},
   {id:68,name:'Hạt nêm Chinsu',price:90000,note:'1.8kg',cat:'🌶️ Gia vị',updated:''},
   {id:69,name:'Hạt nêm Chinsu',price:30000,note:'0.5kg',cat:'🌶️ Gia vị',updated:''},
-  {id:70,name:'Ngũ vị hương',price:1000,note:'',cat:'🌶️ Gia vị',updated:''},
+  {id:70,name:'Ngũ vị hương',price:1000,note:'',cat:'🕯️ Đồ thờ cúng',updated:''},
   {id:71,name:'Bột chiên giòn',price:8000,note:'',cat:'🌶️ Gia vị',updated:''},
   {id:72,name:'Gia vị cá kho',price:8000,note:'',cat:'🌶️ Gia vị',updated:''},
   {id:73,name:'Gia vị thịt kho tàu',price:8000,note:'',cat:'🌶️ Gia vị',updated:''},
@@ -287,7 +287,8 @@ const products = [
   {id:188,name:'Áo mưa giấy',price:10000,note:'',cat:'🔧 Đồ dùng khác',updated:'31/05/2026'},
   {id:189,name:'Sữa fristi',price:25000,note:'Vỉ',cat:'🥛 Sữa',updated:'31/05/2026'},
   {id:190,name:'Keo dính chuột',price:10000,note:'',cat:'🔧 Đồ dùng khác',updated:'31/05/2026'},
-  {id:191,name:'Sữa Ông Thọ',price:25000,note:'Lon',cat:'🥛 Sữa',updated:'31/05/2026'},];
+  {id:191,name:'Sữa Ông Thọ',price:25000,note:'Lon',cat:'🥛 Sữa',updated:'31/05/2026'},
+];
 const ALL_CATS=["Tất cả","🥤 Nước uống","🥛 Sữa","☕ Cà phê","🍜 Mì & Bún","🍪 Bánh kẹo","🌶️ Gia vị","🚬 Thuốc lá","🕯️ Đồ thờ cúng","🧴 Vệ sinh cá nhân","🧻 Giấy & Vệ sinh","🔧 Đồ dùng khác"];
 let activeCategory="Tất cả",cart=[];
 function fmt(p){return p.toLocaleString("vi-VN")+"đ"}
