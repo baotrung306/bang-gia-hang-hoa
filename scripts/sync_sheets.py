@@ -1,26 +1,13 @@
-"""
-sync_sheets.py
-Đọc dữ liệu từ Google Sheets (public) → cập nhật mảng products[] trong index.html
-Cấu trúc Google Sheets cần có các cột:
-  name | price | note | cat | updated
-  (hàng đầu tiên là tiêu đề, bỏ qua)
-"""
-
 import os, csv, re, sys
+import unicodedata as _ud
 from datetime import datetime, timezone, timedelta
 import urllib.request
 
-# ── Cấu hình ────────────────────────────────────────────────────────────────
 SHEET_ID  = os.environ.get("SHEET_ID", "1y1DIj9RUiK6ANGSOc5j5t_9m9cIsBZNo")
-SHEET_GID = os.environ.get("SHEET_GID", "0")   # Tab đầu tiên
+SHEET_GID = os.environ.get("SHEET_GID", "0")
 HTML_FILE = "index.html"
+VN_TZ     = timezone(timedelta(hours=7))
 
-# Múi giờ Việt Nam (UTC+7)
-VN_TZ = timezone(timedelta(hours=7))
-
-# ── Bảng map tên danh mục → emoji ───────────────────────────────────────────
-# Bạn chỉ cần gõ tên nhóm thường trong Google Sheets, script tự thêm emoji
-# Có thể thêm dòng mới vào đây nếu muốn thêm nhóm hoặc đổi emoji
 CAT_EMOJI = {
     "nuoc uong":       "🥤 Nước uống",
     "sua":             "🥛 Sữa",
@@ -39,68 +26,89 @@ CAT_EMOJI = {
     "do dung":         "🔧 Đồ dùng khác",
 }
 
-import unicodedata as _ud
-
 def _nodiac(s):
-    """Bỏ dấu tiếng Việt để so sánh linh hoạt."""
     return "".join(
         c for c in _ud.normalize("NFD", s.lower())
         if _ud.category(c) != "Mn"
     )
 
 def add_emoji(cat_raw):
-    """Tra bảng map (không phân biệt dấu/hoa thường), trả về tên có emoji.
-    Nếu không tìm thấy → giữ nguyên tên gốc."""
     key = _nodiac(cat_raw.strip())
     for k, v in CAT_EMOJI.items():
         if key == _nodiac(k):
             return v
     return cat_raw.strip()
 
-# ── 1. Tải CSV từ Google Sheets ─────────────────────────────────────────────
+# ── 1. Tải CSV ────────────────────────────────────────────────────────────────
 url = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/export?format=csv&gid={SHEET_GID}"
-print(f"📥 Đang tải dữ liệu từ: {url}")
+print(f"Dang tai du lieu tu: {url}")
 
 try:
     with urllib.request.urlopen(url, timeout=30) as resp:
         raw = resp.read().decode("utf-8")
 except Exception as e:
-    print(f"❌ Không thể tải Google Sheets: {e}")
+    print(f"Khong the tai Google Sheets: {e}")
     sys.exit(1)
 
 rows = list(csv.reader(raw.splitlines()))
-if len(rows) < 2:
-    print("❌ Sheet không có dữ liệu.")
+print(f"Tong so hang trong sheet: {len(rows)}")
+
+# In ra 5 hàng đầu để debug
+for i, r in enumerate(rows[:5]):
+    print(f"  Hang {i}: {r}")
+
+# ── 2. Tự tìm hàng tiêu đề ───────────────────────────────────────────────────
+HEADER_KEYWORDS = ["name","price","ten","gia","chung loai","don gia",
+                   "san pham","nhom","danh muc","ghi chu","cap nhat","updated"]
+
+header_row_idx = None
+for i, row in enumerate(rows):
+    row_norm = [_nodiac(c.strip()) for c in row]
+    if any(any(kw in cell for kw in HEADER_KEYWORDS) for cell in row_norm if cell):
+        header_row_idx = i
+        break
+
+if header_row_idx is None:
+    # fallback: hàng không trống đầu tiên
+    for i, row in enumerate(rows):
+        if any(c.strip() for c in row):
+            header_row_idx = i
+            break
+
+if header_row_idx is None:
+    print("Sheet trong rong.")
     sys.exit(1)
 
-header = [h.strip().lower() for h in rows[0]]
-data   = rows[1:]
-print(f"✅ Đọc được {len(data)} dòng. Header: {header}")
+header_raw = rows[header_row_idx]
+header     = [_nodiac(h.strip()) for h in header_raw]
+data       = [r for r in rows[header_row_idx+1:] if any(c.strip() for c in r)]
 
-# ── 2. Xác định vị trí các cột ──────────────────────────────────────────────
-def col(name, aliases=None):
-    """Tìm index cột theo tên, hỗ trợ tên tiếng Anh và tiếng Việt."""
-    candidates = [name] + (aliases or [])
-    for c in candidates:
-        if c in header:
-            return header.index(c)
+print(f"Hang tieu de (hang {header_row_idx+1}): {header_raw}")
+print(f"So hang du lieu: {len(data)}")
+
+# ── 3. Xác định cột ──────────────────────────────────────────────────────────
+def col(aliases):
+    for name in aliases:
+        key = _nodiac(name)
+        for i, h in enumerate(header):
+            if h and (key in h or h in key):
+                return i
     return None
 
-idx_name    = col("name",    ["tên", "ten", "sản phẩm", "san pham"])
-idx_price   = col("price",   ["giá", "gia", "đơn giá", "don gia"])
-idx_note    = col("note",    ["ghi chú", "ghi chu", "quy cách", "quy cach"])
-idx_cat     = col("cat",     ["danh mục", "danh muc", "nhóm", "nhom", "category"])
-idx_updated = col("updated", ["ngày cập nhật", "ngay cap nhat", "cập nhật", "cap nhat"])
+idx_name    = col(["name","ten","chung loai","san pham","chung loai sp"])
+idx_price   = col(["price","gia","don gia","gia ban"])
+idx_note    = col(["note","ghi chu","quy cach"])
+idx_cat     = col(["cat","nhom","danh muc","nhom hang","category"])
+idx_updated = col(["updated","cap nhat","ngay cap nhat"])
+
+print(f"Vi tri cot: name={idx_name}, price={idx_price}, note={idx_note}, cat={idx_cat}, updated={idx_updated}")
 
 if idx_name is None or idx_price is None:
-    print(f"❌ Không tìm thấy cột 'name' hoặc 'price'.")
-    print(f"   Tên cột hiện tại: {header}")
-    print("   Hãy đặt tên cột trong Google Sheets là: name, price, note, cat, updated")
+    print("Khong tim thay cot ten san pham hoac gia.")
+    print(f"Header doc duoc: {header_raw}")
     sys.exit(1)
 
-print(f"   Cột: name={idx_name}, price={idx_price}, note={idx_note}, cat={idx_cat}, updated={idx_updated}")
-
-# ── 3. Parse dữ liệu ─────────────────────────────────────────────────────────
+# ── 4. Parse sản phẩm ────────────────────────────────────────────────────────
 def get(row, idx, default=""):
     if idx is None: return default
     return row[idx].strip() if idx < len(row) else default
@@ -111,88 +119,63 @@ products  = []
 for i, row in enumerate(data, start=1):
     name = get(row, idx_name)
     if not name:
-        continue  # Bỏ qua hàng trống
+        continue
 
-    # Làm sạch giá: bỏ dấu phẩy, chữ "đ", khoảng trắng
-    raw_price = get(row, idx_price, "0")
-    raw_price = re.sub(r"[^\d]", "", raw_price)
+    raw_price = re.sub(r"[^\d]", "", get(row, idx_price, "0"))
     try:
         price = int(raw_price)
     except ValueError:
-        print(f"⚠️  Dòng {i}: giá không hợp lệ '{get(row, idx_price)}', bỏ qua.")
         continue
 
     note    = get(row, idx_note)
-    cat     = add_emoji(get(row, idx_cat))   # tự thêm emoji từ bảng map
+    cat     = add_emoji(get(row, idx_cat))
     updated = get(row, idx_updated, today_str)
 
-    # Escape dấu nháy đơn để không vỡ JS
     def esc(s): return s.replace("\\", "\\\\").replace("'", "\\'")
 
     products.append({
-        "id":      i,
-        "name":    esc(name),
-        "price":   price,
-        "note":    esc(note),
-        "cat":     esc(cat),
-        "updated": updated,
+        "id": i, "name": esc(name), "price": price,
+        "note": esc(note), "cat": esc(cat), "updated": updated,
     })
 
-print(f"✅ Đã parse {len(products)} sản phẩm hợp lệ.")
+print(f"Da parse {len(products)} san pham hop le.")
 
-# ── 4. Tạo chuỗi JS ──────────────────────────────────────────────────────────
-lines = []
-for p in products:
-    lines.append(
-        f"  {{id:{p['id']},name:'{p['name']}',price:{p['price']},"
-        f"note:'{p['note']}',cat:'{p['cat']}',updated:'{p['updated']}'}}"
-    )
+# ── 5. Tạo JS ────────────────────────────────────────────────────────────────
+lines = [
+    f"  {{id:{p['id']},name:'{p['name']}',price:{p['price']},"
+    f"note:'{p['note']}',cat:'{p['cat']}',updated:'{p['updated']}'}}"
+    for p in products
+]
 products_js = "const products = [\n" + ",\n".join(lines) + "\n];"
 
-# ── 5. Tạo danh sách ALL_CATS từ dữ liệu thực ───────────────────────────────
 cats_seen = []
 for p in products:
-    c = p["cat"].replace("\\'", "'")   # unescape để so sánh
+    c = p["cat"].replace("\\'", "'")
     if c and c not in cats_seen:
         cats_seen.append(c)
 
-# Luôn có "Tất cả" đứng đầu
-all_cats = ["Tất cả"] + cats_seen
+all_cats      = ["Tất cả"] + cats_seen
 cats_js_items = ",".join(f'"{c}"' for c in all_cats)
-cats_js = f'const ALL_CATS=[{cats_js_items}];'
+cats_js       = f'const ALL_CATS=[{cats_js_items}];'
 
-# ── 6. Cập nhật số sản phẩm và ngày trong header ─────────────────────────────
 count_str   = f"{len(products)} sản phẩm"
 updated_str = datetime.now(VN_TZ).strftime("%d/%m/%Y")
 
-# ── 7. Đọc & cập nhật index.html ─────────────────────────────────────────────
+# ── 6. Cập nhật index.html ───────────────────────────────────────────────────
 if not os.path.exists(HTML_FILE):
-    print(f"❌ Không tìm thấy {HTML_FILE}")
+    print(f"Khong tim thay {HTML_FILE}")
     sys.exit(1)
 
 with open(HTML_FILE, "r", encoding="utf-8") as f:
     html = f.read()
 
-# Thay mảng products
-html, n1 = re.subn(
-    r"const products\s*=\s*\[.*?\];",
-    products_js,
-    html,
-    flags=re.DOTALL
-)
+html, n1 = re.subn(r"const products\s*=\s*\[.*?\];", products_js, html, flags=re.DOTALL)
 if n1 == 0:
-    print("❌ Không tìm thấy 'const products = [...]' trong index.html")
+    print("Khong tim thay 'const products = [...]' trong index.html")
     sys.exit(1)
 
-# Thay ALL_CATS
-html, n2 = re.subn(
-    r"const ALL_CATS\s*=\s*\[.*?\];",
-    cats_js,
-    html
-)
-
-# Cập nhật dòng hiển thị số sản phẩm + ngày (id="pCount")
-html = re.sub(
+html, _ = re.subn(r"const ALL_CATS\s*=\s*\[.*?\];", cats_js, html)
+html    = re.sub(
     r'(<[^>]*id="pCount"[^>]*>)[^<]*(</)',
     rf'\g<1>{count_str} • Cập nhật {updated_str}\g<2>',
     html
@@ -201,7 +184,4 @@ html = re.sub(
 with open(HTML_FILE, "w", encoding="utf-8") as f:
     f.write(html)
 
-print(f"✅ Đã cập nhật index.html:")
-print(f"   - {len(products)} sản phẩm")
-print(f"   - {len(all_cats)-1} danh mục: {', '.join(cats_seen)}")
-print(f"   - Ngày cập nhật: {updated_str}")
+print(f"Da cap nhat index.html: {len(products)} san pham, {len(cats_seen)} nhom hang.")
