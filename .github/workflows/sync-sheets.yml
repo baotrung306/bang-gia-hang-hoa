@@ -40,6 +40,7 @@ jobs:
           else
             UPDATED=$(TZ='Asia/Ho_Chi_Minh' date '+%d/%m/%Y %H:%M')
             git commit -m "Sync bang gia tu Google Sheets [$UPDATED]"
+            git pull --rebase origin main
             git push
             echo "Da push cap nhat len GitHub."
           fi
