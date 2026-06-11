@@ -1,46 +1,45 @@
-name: 🔄 Sync Google Sheets → index.html
+name: Sync Google Sheets to index.html
 
 on:
   schedule:
-    # Chạy mỗi ngày lúc 8:00 sáng giờ Việt Nam (01:00 UTC)
-    # Muốn chạy mỗi giờ → đổi thành: '0 * * * *'
-    # Muốn mỗi 30 phút   → đổi thành: '*/30 * * * *'
-    - cron: '0 1 * * *'
+    - cron: '0 1 * * *'  # Mỗi ngày 8h sáng giờ Việt Nam
+  workflow_dispatch:      # Cho phép chạy thủ công
 
-  workflow_dispatch:   # Cho phép bấm nút chạy thủ công trên GitHub
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   sync:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write   # Cần quyền này để commit & push
+      contents: write
 
     steps:
-      - name: ⬇️ Checkout repo
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: 🐍 Cài Python
+      - name: Cai Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: ▶️ Chạy script sync
+      - name: Chay script sync
         env:
           SHEET_ID:  ${{ secrets.SHEET_ID }}
           SHEET_GID: ${{ secrets.SHEET_GID }}
         run: python scripts/sync_sheets.py
 
-      - name: 📤 Commit & push nếu có thay đổi
+      - name: Commit va push neu co thay doi
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add index.html
           if git diff --cached --quiet; then
-            echo "✅ Không có thay đổi, bỏ qua commit."
+            echo "Khong co thay doi, bo qua commit."
           else
             UPDATED=$(TZ='Asia/Ho_Chi_Minh' date '+%d/%m/%Y %H:%M')
-            git commit -m "🔄 Sync bảng giá từ Google Sheets [$UPDATED]"
+            git commit -m "Sync bang gia tu Google Sheets [$UPDATED]"
             git push
-            echo "✅ Đã push cập nhật lên GitHub."
+            echo "Da push cap nhat len GitHub."
           fi
