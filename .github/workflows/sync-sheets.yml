@@ -2,7 +2,7 @@ name: Sync Google Sheets to index.html
 
 on:
   schedule:
-    - cron: '0 1 * * *'  # Mỗi ngày 8h sáng giờ Việt Nam
+    - cron: '*/30 * * *'  # Mỗi 30 phút 1 lần
   workflow_dispatch:      # Cho phép chạy thủ công
 
 env:
