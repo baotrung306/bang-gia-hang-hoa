@@ -78,7 +78,7 @@ body { font-family: 'Be Vietnam Pro', sans-serif; background: var(--bg); color: 
 <body>
 <div id="header">
   <div class="header-inner">
-    <div class="logo"><div class="logo-bar"></div><div><h1>Bảng Giá Hàng Hóa</h1><p id="pCount">195 sản phẩm • Cập nhật 30/08/2026</p></div></div>
+    <div class="logo"><div class="logo-bar"></div><div><h1>Bảng Giá Hàng Hóa</h1><p id="pCount">197 sản phẩm • Cập nhật 30/08/2026</p></div></div>
     <div class="search-wrap"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="Tìm sản phẩm..."></div>
     <button id="cartBtn">🛒 Giỏ hàng <span id="cartBadge">0</span></button>
   </div>
@@ -274,7 +274,7 @@ const products = [
   {id:175,name:'Nước mắm madame lân',price:33000,note:'',cat:'🌶️ Gia vị',updated:'31/05/2026'},
   {id:176,name:'Nước mắm Nam Ngư',price:37000,note:'',cat:'🌶️ Gia vị',updated:'31/05/2026'},
   {id:177,name:'Tương ớt Chinsu',price:32000,note:'500g',cat:'🌶️ Gia vị',updated:'31/05/2026'},
-  {id:178,name:'Tương ớt Chinsu',price:18000,note:'250g',cat:'🌶️ Gia vị',updated:'31/05/2026'},
+  {id:178,name:'Tương ớt Chinsu',price:18000,note:'250g',cat:'',updated:'31/05/2026'},
   {id:179,name:'Bột canh i ốt Hải Châu',price:5000,note:'',cat:'🌶️ Gia vị',updated:'31/05/2026'},
   {id:180,name:'Muối trắng',price:8000,note:'1kg',cat:'🌶️ Gia vị',updated:'31/05/2026'},
   {id:181,name:'Giấy ăn hàng không',price:52000,note:'Gói vuông',cat:'🧻 Giấy & Vệ sinh',updated:'31/05/2026'},
@@ -291,7 +291,9 @@ const products = [
   {id:192,name:'Tăm tre',price:5000,note:'Gói nhỏ',cat:'🔧 Đồ dùng khác',updated:'19/08/2026'},
   {id:193,name:'Nước giặt 20kg',price:640000,note:'Can',cat:'🧴 Vệ sinh cá nhân',updated:'19/08/2026'},
   {id:194,name:'Nước giặt 20kg cửa ngang',price:700000,note:'Can',cat:'🧴 Vệ sinh cá nhân',updated:''},
-  {id:195,name:'Nước giặt 19kg',price:520000,note:'Can',cat:'🧴 Vệ sinh cá nhân',updated:''}
+  {id:195,name:'Nước giặt 19kg',price:520000,note:'Can',cat:'🧴 Vệ sinh cá nhân',updated:''},
+  {id:196,name:'Sa tế tôm',price:10000,note:'lọ',cat:'🌶️ Gia vị',updated:'30/08/2026'},
+  {id:197,name:'Nước hàng kho thịt',price:3000,note:'Lọ',cat:'🌶️ Gia vị',updated:'30/08/2026'}
 ];
 const ALL_CATS=["Tất cả","🥤 Nước uống","🍜 Mì & Bún","🥛 Sữa","☕ Cà phê","🌶️ Gia vị","🕯️ Đồ thờ cúng","🍪 Bánh kẹo","🚬 Thuốc lá","🔧 Đồ dùng khác","🧴 Vệ sinh cá nhân","🧻 Giấy & Vệ sinh"];
 let activeCategory="Tất cả",cart=[];
